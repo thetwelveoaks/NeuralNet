@@ -1,19 +1,10 @@
-from entity import *
-from utility import *
+import utility
+import entity
 
-dataset = readfile('spambase.data')
-splited_data = splitdata(dataset)
-training = splited[0]
-validation = splited[1]
-testing = splited[2]
-#print(training[0])
+dataset = utility.readfile('spambase.data')
+splited_data = utility.splitdata(dataset)
+training = [utility.normalise(item) for item in splited_data[0]]
+validation = [utility.normalise(item) for item in splited_data[1]]
+testing = [utility.normalise(item) for item in splited_data[2]]
 
-
-##neur_net = NeuralNet(0, 2, inputs)
-##neur_net.train()
-##print(neur_net.get_weights())
-
-#n = Neuron(len(inputs[0]), 0.8)
-
-#print(len(inputs[0]))
-#print(n.get_weights())
+print(training[0])

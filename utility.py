@@ -36,21 +36,3 @@ def normalise(dataset):
     maxi = max(dataset[0])
     return [[(num - mini) / (maxi - mini) for num in dataset[0]]] + [dataset[1]]
 
-
-dataset = readfile('spambase.data')
-splited = splitdata(dataset)
-
-training = [normalise(item) for item in splited[0]]
-validation = [normalise(item) for item in splited[1]]
-testing = [normalise(item) for item in splited[2]]
-
-#print(training[0])
-#training = [normalise(item) for item in training]
-
-#normalise(training[0])
-
-#print(training[0])
-#print(validation[0])
-#print(testing[0])
-
-
