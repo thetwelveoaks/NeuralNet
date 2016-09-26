@@ -1,6 +1,8 @@
 import pdb
 class Neuron:
     'Definition of a single neuron'
+    valid_threshold = 1e-3
+    eps = 1e-5
     def __init__(self, num_inputs, learning_rate):
         import random
         self.weights = []
@@ -16,15 +18,14 @@ class Neuron:
         self.input_pair = input_pair
         self.synaptic_in = sum([wgt * ipt for wgt, ipt in zip(self.weights, self.input_pair[0])])
         output = self.activate()
-        self.error = self.calculate_err(output)
+        self.error = self.calculate_err(output, self.input_pair[1])
         return output
 
     def calculate_err(self, output):
-##        if (self.inputs[1] == 0 and output - 1 / 2 > 1e-5) or (self.inputs[1] == 1 and output - 1 / 2 <= 1e-5):
-##            return 1
-##        return 0
-
         return self.input_pair[1] - output
+
+    def validate(self):
+        return abs(self.error - Neuron.valid_threshold) <= Neuron.eps
 
     def adjust_weights_def(self):
         self.delta = self.error * self.activate_derv()
@@ -91,6 +92,12 @@ class Layer:
             deltas.append(neur.getDelta())
         return self.next_deltas(deltas)
 
+    def validate(self):
+        valid = True
+        for neur in self.neurons:
+            valid = valid and neur.validate()
+        return valid
+
     def createNeuron(self, num_inputs):
         return Neuron(num_inputs, Layer.alpha)
 
@@ -112,8 +119,8 @@ class Layer:
 
 class NeuralNet:
 
-    error_trhd = 0.010
-    eps = 1e-4
+    error_trhd = 1e-4
+    eps = 1e-6
 
     def __init__(self, num_layers, num_classes):
         self.layers = []
@@ -124,7 +131,7 @@ class NeuralNet:
     def train(self, inputs):
         
         output = []
-        count = 10000
+        count = 100
         self.init_layers(inputs[0])
         last_error = 0
         while(count > 0 and not self.isConverged(last_error)):
